@@ -40,6 +40,8 @@ Thumbs.db
 !.gitkeep
 !.keep
 
+/.env
+
 ### IDE ###
 # from JetBrains
 /.idea/*
