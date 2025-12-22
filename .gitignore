@@ -27,6 +27,9 @@ Thumbs.db
 *.exe
 *.war
 
+/vendor
+/vendor/*
+
 /database
 /database/*
 
