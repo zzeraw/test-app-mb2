@@ -45,7 +45,10 @@
         },
         "process-timeout": 1800,
         "fxp-asset": {
-            "enabled": false
+            "installer-paths": {
+                "npm-asset-library": "vendor/npm",
+                "bower-asset-library": "vendor/bower"
+            }
         }
     },
     "repositories": [
