@@ -1,5 +1,6 @@
 <?php
 
+$dependencyInjectionContainers = require __DIR__ . '/di.php';
 $dbMain = require __DIR__ . '/db/_db_main.php';
 
 $config = [
@@ -13,7 +14,16 @@ $config = [
         'cache' => [
             'class' => \yii\caching\FileCache::class,
         ],
+        'i18n' => [
+            'translations' => [
+                'common' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                    'basePath' => '@common/messages',
+                ],
+            ],
+        ],
     ],
+    'container' => $dependencyInjectionContainers
 ];
 
 if (YII_ENV_DEV) {

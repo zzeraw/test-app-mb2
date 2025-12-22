@@ -59,3 +59,4 @@ docker compose exec frontend bash
 
 jdbc:mysql://localhost:33061/testappmb2
 
+php yii user/create pekidoch@gmail.com 1234567890

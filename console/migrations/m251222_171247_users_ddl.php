@@ -17,9 +17,9 @@ class m251222_171247_users_ddl extends Migration
             'auth_key' => $this->string(32)->notNull(),
             'password_hash' => $this->string()->notNull(),
             'password_reset_token' => $this->string()->unique(),
-            'status' => $this->smallInteger()->notNull()->defaultValue(1),
-            'created_at' => $this->integer()->notNull(),
-            'updated_at' => $this->integer()->notNull(),
+            'status' => $this->smallInteger()->notNull()->defaultValue(0),
+            'created_at' => $this->dateTime()->notNull(),
+            'updated_at' => $this->dateTime()->notNull(),
         ], $tableOptions);
 
         $this->createIndex('idx-user-email', 'users', 'email');
