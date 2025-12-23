@@ -47,7 +47,7 @@ AppAsset::register($this);
 
     echo Html::beginForm(['/auth/logout'], 'post', ['class' => 'd-flex'])
         . Html::submitButton(
-            'Logout',
+            'Выход',
             ['class' => 'btn btn-link logout text-decoration-none']
         )
         . Html::endForm();
