@@ -4,13 +4,9 @@ declare(strict_types=1);
 
 namespace backend\controllers;
 
-use LoginForm;
-use Yii;
 use yii\filters\AccessControl;
-use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\ErrorAction;
-use yii\web\Response;
 
 class SiteController extends Controller
 {
@@ -50,8 +46,21 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $currentUser = '';
-
         return $this->render('index');
+    }
+
+    public function actionAjaxGenerate(int $userId): array
+    {
+        
+    }
+
+    public function actionAjaxFallDown(int $userId, int $appleId): array
+    {
+
+    }
+
+    public function actionAjaxEat(int $userId, int $appleId, int $size): array
+    {
+
     }
 }
