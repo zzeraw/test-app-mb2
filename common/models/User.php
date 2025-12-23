@@ -34,7 +34,7 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * @inheritdoc
+     * @return array<int, array<int|string, mixed>>
      */
     public function rules(): array
     {
@@ -64,9 +64,9 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
-     * @inheritdoc
+     * @return array<string, string>
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t(TranslationCategoryEnum::NAME->value, 'ID'),

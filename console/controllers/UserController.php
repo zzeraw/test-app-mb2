@@ -29,7 +29,7 @@ class UserController extends Controller
     ): int {
         $this->stdout(
             sprintf(
-                'Creating user: %s / %s\n',
+                'Creating user: %s / %s',
                 $email,
                 $password,
             ),

@@ -6,24 +6,29 @@ class m251222_171247_users_ddl extends Migration
 {
     public function up()
     {
-        $tableOptions = null;
-        if ('mysql' === $this->db->driverName) {
-            $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
-        }
+        $sql = <<<SQL
+            create table users
+            (
+                id int auto_increment not null
+                    primary key,
+                email varchar(255) not null,
+                auth_key varchar(32) not null,
+                password_hash varchar(255) not null,
+                password_reset_token varchar(255) null,
+                status smallint not null,
+                created_at datetime not null,
+                updated_at datetime not null,
+                constraint `uq-users-email`
+                    unique (email),
+                constraint `uq-users-password_reset_token`
+                    unique (password_reset_token)
+            ) character set utf8 collate utf8_unicode_ci ENGINE=InnoDB;
 
-        $this->createTable('users', [
-            'id' => $this->primaryKey(),
-            'email' => $this->string()->notNull()->unique(),
-            'auth_key' => $this->string(32)->notNull(),
-            'password_hash' => $this->string()->notNull(),
-            'password_reset_token' => $this->string()->unique(),
-            'status' => $this->smallInteger()->notNull()->defaultValue(0),
-            'created_at' => $this->dateTime()->notNull(),
-            'updated_at' => $this->dateTime()->notNull(),
-        ], $tableOptions);
+            create index `ix-users-status`
+                on users (status);
+        SQL;
 
-        $this->createIndex('idx-user-email', 'users', 'email');
-        $this->createIndex('idx-user-status', 'users', 'status');
+        Yii::$app->db->createCommand($sql)->execute();
     }
 
     public function down()
