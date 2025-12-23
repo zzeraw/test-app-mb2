@@ -13,15 +13,6 @@ use yii\web\View;
 /** @var $userId int */
 
 ?>
-<?php if (ResponseStatusEnum::FAIL === $status) : ?>
-    <div class="alert alert-danger mb-0">
-        <p>Ошибка</p>
-        <?php if (null !== $message) : ?>
-            <p><?= $message ?></p>
-        <?php endif; ?>
-    </div>
-<?php endif; ?>
-
 <?php if (empty($appleDtos)): ?>
     <div class="alert alert-secondary mb-0">
         Яблок пока нет. Нажмите "Сгенерировать яблоки".
@@ -48,8 +39,8 @@ use yii\web\View;
 
             $colorStyle = 'color: ' . $colorCode . ';';
 
-            $fallUrl = Url::to(['/apple/fall', 'userId' => $userId, 'appleId' => $id]);
-            $eatUrl  = Url::to(['/apple/eat', 'userId' => $userId, 'appleId' => $id]);  // POST: appleId, percent
+            $fallUrl = Url::to(['/site/ajax-fall-down', 'userId' => $userId, 'appleId' => $id]);
+            $eatUrl  = Url::to(['/site/ajax-eat', 'userId' => $userId, 'appleId' => $id]);
             ?>
 
             <div class="col-12 col-md-6 col-lg-4">
@@ -89,31 +80,23 @@ use yii\web\View;
                         </div>
 
                         <div class="d-flex gap-2 flex-wrap">
-                            <?= Html::beginForm($fallUrl, 'post', ['class' => 'js-apple-action']) ?>
+                            <?= Html::beginForm($fallUrl, 'post', ['class' => 'js-apple-fall']) ?>
                                 <?= Html::hiddenInput('appleId', (string)$id) ?>
-                                <button type="submit"
-                                        class="btn btn-outline-warning btn-sm"
-                                    <?= $canFall ? '' : 'disabled' ?>>
+                                <button type="submit" class="btn btn-outline-warning btn-sm" <?= $canFall ? '' : 'disabled' ?>>
                                     Упасть
                                 </button>
                             <?= Html::endForm() ?>
 
-                            <?= Html::beginForm($eatUrl, 'post', ['class' => 'js-apple-action d-flex gap-2 align-items-center']) ?>
+                            <?= Html::beginForm($eatUrl, 'post', ['class' => 'js-apple-eat d-flex gap-2 align-items-center']) ?>
                                 <?= Html::hiddenInput('appleId', (string)$id) ?>
                                 <input type="number"
                                        name="percent"
                                        class="form-control form-control-sm"
-                                       style="max-width: 110px"
-                                       min="1"
-                                       max="100"
-                                       step="1"
-                                       value="10"
+                                       style="max-width: 60px"
+                                       min="1" max="100" step="1" value="10"
                                     <?= $canEat ? '' : 'disabled' ?>
                                        placeholder="%">
-
-                                <button type="submit"
-                                        class="btn btn-outline-danger btn-sm"
-                                    <?= $canEat ? '' : 'disabled' ?>>
+                                <button type="submit" class="btn btn-outline-danger btn-sm" <?= $canEat ? '' : 'disabled' ?>>
                                     Съесть %
                                 </button>
                             <?= Html::endForm() ?>

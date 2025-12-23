@@ -1,12 +1,14 @@
 <?php
 
-/** @var yii\web\View $this */
+/** @var View $this */
 /** @var string $content */
 
+use yii\web\View;
 use backend\assets\AppAsset;
 use yii\helpers\Html;
 
 AppAsset::register($this);
+
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>

@@ -7,12 +7,13 @@ namespace common\services;
 use common\dtos\AppleStateItemDto;
 use common\dtos\models\AppleDto;
 use common\enums\AppleColorEnum;
-use common\public_interfaces\AppleDtoInterface;
+use common\enums\AppleStatusEnum;
 use common\public_interfaces\AppleStateItemDtoInterface;
 use common\public_services\AppleServiceInterface;
 use common\repositories\AppleRepository;
 use DateMalformedStringException;
 use DateTimeImmutable;
+use LogicException;
 use Random\RandomException;
 use Throwable;
 use Yii;
@@ -74,13 +75,92 @@ readonly class AppleService implements AppleServiceInterface
     /**
      * @return AppleStateItemDtoInterface[]
      */
-    public function findActiveDtosByUserId(int $userId): array
+    public function findActiveStateDtosByUserId(int $userId): array
     {
         $dtos = $this->appleRepository->findActiveDtosByUserId($userId);
 
         return array_map(function (AppleDto $dto) {
             return $this->convertAppleDtoToAppleStateItemDto($dto);
         }, $dtos);
+    }
+
+    public function findActiveStateDtoByUserIdAndId($userId, $appleId): ?AppleStateItemDtoInterface
+    {
+        $appleDto = $this->appleRepository->findActiveDtoByUserIdAndId($userId, $appleId);
+
+        if (null === $appleDto) {
+            return null;
+        }
+
+        return $this->convertAppleDtoToAppleStateItemDto($appleDto);
+    }
+
+    public function fallDown($userId, $appleId): void
+    {
+        $dto = $this->appleRepository->findActiveDtoByUserIdAndId($userId, $appleId);
+
+        if (null === $dto) {
+            throw new LogicException(sprintf('Яблоко #%d не найдено!', $appleId));
+        }
+
+        if (AppleStatusEnum::ON_GROUND === $dto->getStatus()) {
+            throw new LogicException(
+                sprintf('Яблоко #%d нельзя уронить, оно уже лежит на земле!', $appleId)
+            );
+        }
+
+        $this->appleRepository->fallDownModel($userId, $appleId);
+    }
+
+    public function eat(int $userId, int $appleId, int $biteSizePercent): void
+    {
+        $dto = $this->appleRepository->findActiveDtoByUserIdAndId($userId, $appleId);
+
+        if (null === $dto) {
+            throw new LogicException(sprintf('Яблоко #%d не найдено!', $appleId));
+        }
+
+        if (AppleStatusEnum::ON_GROUND !== $dto->getStatus()) {
+            throw new LogicException(
+                sprintf('Яблоко #%d нельзя откусить, оно еще висит на дереве!', $appleId)
+            );
+        }
+
+        if ($biteSizePercent <= 0 || $biteSizePercent > 100) {
+            throw new LogicException('Размер укуса должен быть в диапазоне 1-100%.');
+        }
+
+        $appleStateItemDto = $this->convertAppleDtoToAppleStateItemDto($dto);
+
+        if (true === $appleStateItemDto->isSpoil()) {
+            throw new LogicException(
+                sprintf('Яблоко #%d нельзя откусить - оно испортилось!', $appleId)
+            );
+        }
+
+        if ($dto->getSizePercent() <= 0) {
+            throw new LogicException(
+                sprintf('Яблоко #%d уже съедено!', $appleId)
+            );
+        }
+
+        if ($biteSizePercent > $dto->getSizePercent()) {
+            throw new LogicException(
+                sprintf(
+                    'Нельзя откусить %d%% от яблока #%d - осталось только %d%%.',
+                    $biteSizePercent,
+                    $appleId,
+                    $dto->getSizePercent()
+                )
+            );
+        }
+
+        $newSizePercent = $dto->getSizePercent() - $biteSizePercent;
+        if ($newSizePercent < 0) {
+            $newSizePercent = 0;
+        }
+
+        $this->appleRepository->eatModel($userId, $appleId, $newSizePercent);
     }
 
     /**
@@ -126,7 +206,7 @@ readonly class AppleService implements AppleServiceInterface
 
         $canEat = $isOnGround
             && !$isSpoil
-            && $appleDto->getSizePercent() > 0.0;
+            && $appleDto->getSizePercent() > 0;
 
         return new AppleStateItemDto(
             $appleDto->getId(),

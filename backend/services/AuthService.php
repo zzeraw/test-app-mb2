@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace backend\services;
 
 use backend\models\forms\LoginForm;
-use common\enums\TranslationCategoryEnum;
 use common\enums\UserStatusEnum;
 use common\public_services\PasswordServiceInterface;
 use common\public_services\UserAuthServiceInterface;
@@ -66,7 +65,7 @@ readonly class AuthService
         if (null === $userDto) {
             $loginForm->addError(
                 self::EMAIL_LOGIN_FORM_ATTRIBUTE,
-                Yii::t(TranslationCategoryEnum::NAME->value, 'This user is not found')
+                'Пользователь не найден'
             );
             return false;
         }
@@ -79,7 +78,7 @@ readonly class AuthService
         if (false === $validationPasswordResult) {
             $loginForm->addError(
                 self::PASSWORD_LOGIN_FORM_ATTRIBUTE,
-                Yii::t(TranslationCategoryEnum::NAME->value, 'Wrong password')
+                'Неправильный пароль'
             );
             return false;
         }
@@ -87,7 +86,7 @@ readonly class AuthService
         if (UserStatusEnum::BLOCKED === $userDto->getStatus()) {
             $loginForm->addError(
                 self::EMAIL_LOGIN_FORM_ATTRIBUTE,
-                Yii::t(TranslationCategoryEnum::NAME->value, 'This user is blocked')
+                'Пользователь заблокирован'
             );
             return false;
         }

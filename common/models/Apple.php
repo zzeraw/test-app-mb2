@@ -5,16 +5,14 @@ namespace common\models;
 use common\dtos\models\AppleDto;
 use common\enums\AppleColorEnum;
 use common\enums\AppleStatusEnum;
-use common\enums\TranslationCategoryEnum;
 use DateTimeImmutable;
-use Yii;
 use yii\db\ActiveRecord;
 
 /**
  * @property int $id
  * @property int $user_id
  * @property string $color
- * @property float $size_percent
+ * @property int $size_percent
  * @property string $status
  * @property string $appeared_at
  * @property string|null $fell_at
@@ -55,8 +53,7 @@ class Apple extends ActiveRecord
             ['color', 'in', 'range' => array_column(AppleColorEnum::cases(), 'value')],
 
             ['size_percent', 'required'],
-            ['size_percent', 'number'],
-            ['size_percent', 'number', 'min' => 0, 'max' => 100],
+            ['size_percent', 'integer', 'min' => 0, 'max' => 100],
 
             ['status', 'required'],
             ['status', 'string', 'max' => 10],
@@ -84,16 +81,16 @@ class Apple extends ActiveRecord
     public function attributeLabels(): array
     {
         return [
-            'id' => Yii::t(TranslationCategoryEnum::NAME->value, 'ID'),
-            'user_id' => Yii::t(TranslationCategoryEnum::NAME->value, 'User ID'),
-            'color' => Yii::t(TranslationCategoryEnum::NAME->value, 'Color'),
-            'size_percent' => Yii::t(TranslationCategoryEnum::NAME->value, 'Size Percent'),
-            'status' => Yii::t(TranslationCategoryEnum::NAME->value, 'Status'),
-            'appeared_at' => Yii::t(TranslationCategoryEnum::NAME->value, 'Appeared At'),
-            'fell_at' => Yii::t(TranslationCategoryEnum::NAME->value, 'Fell At'),
-            'created_at' => Yii::t(TranslationCategoryEnum::NAME->value, 'Created At'),
-            'updated_at' => Yii::t(TranslationCategoryEnum::NAME->value, 'Updated At'),
-            'is_archive' => Yii::t(TranslationCategoryEnum::NAME->value, 'Is Archive'),
+            'id' => 'ID',
+            'user_id' => 'Пользователь',
+            'color' => 'Цвет',
+            'size_percent' => 'Размер (в процентах)',
+            'status' => 'Статус',
+            'appeared_at' => 'Дата появления яблока',
+            'fell_at' => 'Дата падения яблока',
+            'created_at' => 'Дата создания записи',
+            'updated_at' => 'Дата редактирования записи',
+            'is_archive' => 'Запись в архиве',
         ];
     }
 
@@ -107,7 +104,7 @@ class Apple extends ActiveRecord
         $this->color = $color;
     }
 
-    public function setSizePercent(float $sizePercent): void
+    public function setSizePercent(int $sizePercent): void
     {
         $this->size_percent = $sizePercent;
     }

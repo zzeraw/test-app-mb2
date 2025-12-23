@@ -14,7 +14,7 @@ readonly class AppleStateItemDto implements AppleStateItemDtoInterface
     public function __construct(
         private int $id,
         private AppleColorEnum $color,
-        private float $sizePercent,
+        private int $sizePercent,
         private AppleStatusEnum $status,
         private bool $canFall,
         private bool $canEat,
@@ -34,7 +34,7 @@ readonly class AppleStateItemDto implements AppleStateItemDtoInterface
         return $this->color;
     }
 
-    public function getSizePercent(): float
+    public function getSizePercent(): int
     {
         return $this->sizePercent;
     }

@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace common\models;
 
 use common\dtos\models\UserDto;
-use common\enums\TranslationCategoryEnum;
 use common\enums\UserStatusEnum;
 use common\public_interfaces\UserDtoInterface;
 use DateTimeImmutable;
-use Yii;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 
@@ -69,14 +67,14 @@ class User extends ActiveRecord implements IdentityInterface
     public function attributeLabels(): array
     {
         return [
-            'id' => Yii::t(TranslationCategoryEnum::NAME->value, 'ID'),
-            'email' => Yii::t(TranslationCategoryEnum::NAME->value, 'Email'),
-            'auth_key' => Yii::t(TranslationCategoryEnum::NAME->value, 'Auth Key'),
-            'password_hash' => Yii::t(TranslationCategoryEnum::NAME->value, 'Password Hash'),
-            'password_reset_token' => Yii::t(TranslationCategoryEnum::NAME->value, 'Reset Password Hash'),
-            'status' => Yii::t(TranslationCategoryEnum::NAME->value, 'Status'),
-            'created_at' => Yii::t(TranslationCategoryEnum::NAME->value, 'Created At'),
-            'updated_at' => Yii::t(TranslationCategoryEnum::NAME->value, 'Updated At'),
+            'id' => 'ID',
+            'email' => 'Почта',
+            'auth_key' => 'Ключ авторизации',
+            'password_hash' => 'Хэш пароля',
+            'password_reset_token' => 'Код сброса пароля',
+            'status' => 'Статус',
+            'created_at' => 'Дата создания записи',
+            'updated_at' => 'Дата изменения записи',
         ];
     }
 

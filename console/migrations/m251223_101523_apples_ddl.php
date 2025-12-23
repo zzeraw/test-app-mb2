@@ -13,7 +13,7 @@ class m251223_101523_apples_ddl extends Migration
                 primary key,
             user_id int not null,
             color varchar(32) not null,
-            size_percent double not null,
+            size_percent int not null,
             status varchar(10) not null,
             appeared_at datetime not null,
             fell_at datetime null,

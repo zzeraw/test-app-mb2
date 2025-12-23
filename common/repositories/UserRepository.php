@@ -12,15 +12,9 @@ use DateTimeImmutable;
 use yii\base\Exception;
 use yii\helpers\VarDumper;
 
-
 readonly class UserRepository
 {
     private const string DATETIME_FORMAT = 'Y-m-d H:i:s';
-
-    public function findDtoById(int $id): ?UserDtoInterface
-    {
-        return $this->findModelById($id)?->getDto();
-    }
 
     public function findDtoByEmail(string $email): ?UserDtoInterface
     {
@@ -84,23 +78,6 @@ readonly class UserRepository
         }
 
         return $userModel->getPrimaryKey();
-    }
-
-    private function findModelById(int $userId): ?User
-    {
-        $model = User::find()
-            ->where([
-                'id' => $userId,
-            ])
-            ->one();
-
-        if (null === $model) {
-            return null;
-        }
-
-        assert($model instanceof User);
-
-        return $model;
     }
 
     private function findModelByEmail(string $email): ?User

@@ -14,7 +14,7 @@ interface AppleStateItemDtoInterface
 
     public function getColor(): AppleColorEnum;
 
-    public function getSizePercent(): float;
+    public function getSizePercent(): int;
 
     public function getStatus(): AppleStatusEnum;
 

@@ -31,9 +31,9 @@ readonly class AppleRepository
         }, $models);
     }
 
-    public function findDtoByUserIdAndId(int $userId, int $id): ?AppleDto
+    public function findActiveDtoByUserIdAndId(int $userId, int $id): ?AppleDto
     {
-        return $this->findModelByUserIdAndId($userId, $id)?->getDto();
+        return $this->findActiveModelByUserIdAndId($userId, $id)?->getDto();
     }
 
     /**
@@ -75,14 +75,10 @@ readonly class AppleRepository
      * @throws BaseException
      * @throws DbException
      */
-    public function updateModel(
-        int $id,
+    public function fallDownModel(
         int $userId,
-        AppleColorEnum $color,
-        float $sizePercent,
-        AppleStatusEnum $status,
-        ?DateTimeImmutable $fellAt,
-    ): int {
+        int $id,
+    ): bool {
         $appleModel = $this->findModelByUserIdAndId($userId, $id);
 
         if (null === $appleModel) {
@@ -92,10 +88,8 @@ readonly class AppleRepository
         }
 
         $appleModel->setUserId($userId);
-        $appleModel->setColor($color->value);
-        $appleModel->setSizePercent($sizePercent);
-        $appleModel->setStatus($status->value);
-        $appleModel->setFellAt($fellAt?->format(self::DATETIME_FORMAT));
+        $appleModel->setStatus(AppleStatusEnum::ON_GROUND->value);
+        $appleModel->setFellAt((new DateTimeImmutable())->format(self::DATETIME_FORMAT));
         $appleModel->setUpdatedAt((new DateTimeImmutable())->format(self::DATETIME_FORMAT));
 
         $saveResult = $appleModel->save();
@@ -109,7 +103,42 @@ readonly class AppleRepository
             );
         }
 
-        return $appleModel->getPrimaryKey();
+        return true;
+    }
+
+    /**
+     * @throws BaseException
+     * @throws DbException
+     */
+    public function eatModel(
+        int $userId,
+        int $id,
+        int $sizePercent,
+    ): bool {
+        $appleModel = $this->findModelByUserIdAndId($userId, $id);
+
+        if (null === $appleModel) {
+            throw new BaseException(
+                sprintf('Apple %d not found for user %d.', $id, $userId)
+            );
+        }
+
+        $appleModel->setUserId($userId);
+        $appleModel->setSizePercent($sizePercent);
+        $appleModel->setUpdatedAt((new DateTimeImmutable())->format(self::DATETIME_FORMAT));
+
+        $saveResult = $appleModel->save();
+
+        if (false === $saveResult) {
+            throw new BaseException(
+                sprintf(
+                    'Cannot save apple data. Error: %s',
+                    VarDumper::dumpAsString($appleModel->getErrors())
+                )
+            );
+        }
+
+        return true;
     }
 
     public function setAsArchivedByUserId(
@@ -123,6 +152,25 @@ readonly class AppleRepository
                 'user_id' => $userId,
             ]
         );
+    }
+
+    private function findActiveModelByUserIdAndId(int $userId, int $appleId): ?Apple
+    {
+        $model = Apple::find()
+            ->where([
+                'user_id' => $userId,
+                'id' => $appleId,
+                'is_archive' => (int)false,
+            ])
+            ->one();
+
+        if (null === $model) {
+            return null;
+        }
+
+        assert($model instanceof Apple);
+
+        return $model;
     }
 
     private function findModelByUserIdAndId(int $userId, int $appleId): ?Apple

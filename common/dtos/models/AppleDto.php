@@ -12,7 +12,7 @@ readonly class AppleDto
         private int $id,
         private int $userId,
         private AppleColorEnum $color,
-        private float $sizePercent,
+        private int $sizePercent,
         private AppleStatusEnum $status,
         private DateTimeImmutable $appearedAt,
         private ?DateTimeImmutable $fellAt,
@@ -37,7 +37,7 @@ readonly class AppleDto
         return $this->color;
     }
 
-    public function getSizePercent(): float
+    public function getSizePercent(): int
     {
         return $this->sizePercent;
     }

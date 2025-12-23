@@ -6,6 +6,7 @@ $dbMain = require __DIR__ . '/db/_db_main.php';
 $config = [
     'id' => 'test-app-mb2',
     'name' => 'Тестовое задание для MB2',
+    'timeZone' => 'Europe/Moscow',
     'aliases' => [
         '@bower' => '@vendor/yidas/yii2-bower-asset/bower',
         '@npm'   => '@vendor/npm-asset',
@@ -15,14 +16,6 @@ $config = [
         'db' => $dbMain,
         'cache' => [
             'class' => \yii\caching\FileCache::class,
-        ],
-        'i18n' => [
-            'translations' => [
-                'common' => [
-                    'class' => 'yii\i18n\PhpMessageSource',
-                    'basePath' => '@common/messages',
-                ],
-            ],
         ],
     ],
     'container' => $dependencyInjectionContainers

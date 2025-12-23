@@ -16,5 +16,11 @@ interface AppleServiceInterface
     /**
      * @return AppleStateItemDtoInterface[]
      */
-    public function findActiveDtosByUserId(int $userId): array;
+    public function findActiveStateDtosByUserId(int $userId): array;
+
+    public function findActiveStateDtoByUserIdAndId($userId, $appleId): ?AppleStateItemDtoInterface;
+
+    public function fallDown($userId, $appleId): void;
+
+    public function eat(int $userId, int $appleId, int $biteSizePercent): void;
 }

@@ -3,8 +3,6 @@
 namespace backend\models\forms;
 
 use backend\dtos\LoginFormDto;
-use common\enums\TranslationCategoryEnum;
-use Yii;
 use yii\base\Model;
 
 class LoginForm extends Model
@@ -26,9 +24,9 @@ class LoginForm extends Model
     public $rememberMe = true;
 
     /**
-     * {@inheritdoc}
+     * @return array<int, array<int|string, mixed>>
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             ['password', 'required'],
@@ -43,14 +41,14 @@ class LoginForm extends Model
     }
 
     /**
-     * @inheritdoc
+     * @return array<string, string>
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
-            'email' => Yii::t(TranslationCategoryEnum::NAME->value, 'Email'),
-            'password' => Yii::t(TranslationCategoryEnum::NAME->value, 'Password'),
-            'rememberMe' => Yii::t(TranslationCategoryEnum::NAME->value, 'Remember Me'),
+            'email' => 'Почта',
+            'password' => 'Пароль',
+            'rememberMe' => 'Запомнить меня',
         ];
     }
 

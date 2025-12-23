@@ -10,6 +10,7 @@ use common\public_services\UserRoleServiceInterface;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\Response;
 
@@ -86,7 +87,7 @@ class AuthController extends Controller
 
         $this->authService->logout();
 
-        return $this->goHome();
+        return $this->redirect($this->getLoginUrl());
     }
 
     private function getSuccessRedirectUrl(): string
@@ -96,12 +97,12 @@ class AuthController extends Controller
         if (null !== $returnUrl) {
             return $returnUrl;
         } else {
-            return '';
+            return Url::to(['/site/index']);
         }
     }
 
     private function getLoginUrl(): string
     {
-        return '';
+        return Url::to(['/auth/login']);
     }
 }

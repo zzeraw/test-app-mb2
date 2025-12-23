@@ -60,7 +60,7 @@ class SiteController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function actions()
+    public function actions(): array
     {
         return [
             'error' => [
@@ -69,9 +69,6 @@ class SiteController extends Controller
         ];
     }
 
-    /**
-     * @return string
-     */
     public function actionIndex(): string
     {
         $userId = $this->userRoleService->getCurrentUserId();
@@ -88,33 +85,65 @@ class SiteController extends Controller
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        if (Yii::$app->request->isAjax) {
-            $userId = $this->userRoleService->getCurrentUserId();
-
-            $responseDto = $this->appleManageService->generate($userId);
-
-            return [
-                'html' => $this->renderPartial('_apples_content', [
-                    'status' => $responseDto->getStatus(),
-                    'message' => $responseDto->getMessage(),
-                    'appleDtos' => $responseDto->getAppleDtos(),
-                    'userId' => $userId,
-                ])
-            ];
+        if (!Yii::$app->request->isAjax) {
+            Yii::$app->response->statusCode = 400;
+            return [];
         }
 
-        Yii::$app->response->statusCode = 400;
+        $responseDto = $this->appleManageService->generate($userId);
 
-        return [];
+        return [
+            'html' => $this->renderPartial('_apples_content', [
+                'status' => $responseDto->getStatus(),
+                'message' => $responseDto->getMessage(),
+                'appleDtos' => $responseDto->getAppleDtos(),
+                'userId' => $userId,
+            ])
+        ];
     }
 
     public function actionAjaxFallDown(int $userId, int $appleId): array
     {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if (!Yii::$app->request->isAjax) {
+            Yii::$app->response->statusCode = 400;
+            return [];
+        }
+
+        $responseDto = $this->appleManageService->fallDown($userId, $appleId);
+
+        return [
+            'html' => $this->renderPartial('_apples_content', [
+                'status' => $responseDto->getStatus(),
+                'message' => $responseDto->getMessage(),
+                'appleDtos' => $responseDto->getAppleDtos(),
+                'userId' => $userId,
+            ]),
+        ];
 
     }
 
-    public function actionAjaxEat(int $userId, int $appleId, int $size): array
+    public function actionAjaxEat(int $userId, int $appleId): array
     {
+        Yii::$app->response->format = Response::FORMAT_JSON;
 
+        if (!Yii::$app->request->isAjax) {
+            Yii::$app->response->statusCode = 400;
+            return [];
+        }
+
+        $size = Yii::$app->request->post('percent');
+
+        $responseDto = $this->appleManageService->eat($userId, $appleId, (int)$size);
+
+        return [
+            'html' => $this->renderPartial('_apples_content', [
+                'status' => $responseDto->getStatus(),
+                'message' => $responseDto->getMessage(),
+                'appleDtos' => $responseDto->getAppleDtos(),
+                'userId' => $userId,
+            ]),
+        ];
     }
 }

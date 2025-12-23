@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace console\models\forms;
 
-use common\enums\TranslationCategoryEnum;
 use console\dtos\SignupFormDto;
-use Yii;
 use yii\base\Model;
 
 class SignupForm extends Model
@@ -22,9 +20,9 @@ class SignupForm extends Model
     public $password;
 
     /**
-     * @inheritdoc
+     * @return array<int, array<int|string, mixed>>
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             ['password', 'required'],
@@ -39,13 +37,13 @@ class SignupForm extends Model
     }
 
     /**
-     * @inheritdoc
+     * @return array<string, string>
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
-            'password' => Yii::t(TranslationCategoryEnum::NAME->value, 'Password'),
-            'email' => Yii::t(TranslationCategoryEnum::NAME->value, 'Email'),
+            'password' => 'Пароль',
+            'email' => 'Почта',
         ];
     }
 
