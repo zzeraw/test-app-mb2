@@ -1,55 +1,85 @@
 <?php
 
+use backend\enums\ResponseStatusEnum;
+use backend\dtos\response\AppleItemResponseDto;
+use yii\helpers\Url;
 use yii\web\View;
 
 /** @var View $this */
+/** @var AppleItemResponseDto[] $appleDtos */
+/** @var int $userId */
 
 $this->title = 'My Yii Application';
 ?>
-<div class="site-index">
+<div class="site-index" id="siteIndexContainer">
 
-    <div class="jumbotron text-center bg-transparent">
-        <h1 class="display-4">Congratulations!</h1>
-
-        <p class="lead">You have successfully created your Yii-powered application.</p>
-
-        <p><a class="btn btn-lg btn-success" href="https://www.yiiframework.com">Get started with Yii</a></p>
+    <div class="jumbotron text-center bg-transparent mb-5">
+        <h1 class="display-4">Яблоки</h1>
+        <p class="lead">Сгенерируйте яблоки и управляйте каждым, нажимая "упасть" или "съесть".</p>
+        <a id="generateApplesBtn" class="btn btn-lg btn-success" href="#">Сгенерировать яблоки</a>
     </div>
 
     <div class="body-content">
-
-        <div class="row">
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-outline-secondary" href="https://www.yiiframework.com/doc/">Yii Documentation &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-outline-secondary" href="https://www.yiiframework.com/forum/">Yii Forum &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-outline-secondary" href="https://www.yiiframework.com/extensions/">Yii Extensions &raquo;</a></p>
-            </div>
+        <div id="applesContent">
+            <?= $this->render('_apples_content', [
+                'status' => ResponseStatusEnum::SUCCESS,
+                'message' => null,
+                'appleDtos' => $appleDtos,
+                'userId' => $userId,
+            ]) ?>
         </div>
-
     </div>
 </div>
+
+<?php
+
+$loadingHtml = '<div class="d-flex justify-content-center align-items-center py-5">'
+        . '<div class="spinner-border" role="status" aria-hidden="true"></div>'
+        . '<span class="ms-3">Генерирую яблоки...</span>'
+        . '</div>';
+$this->registerJsVar('applesLoadingHtml', $loadingHtml);
+$this->registerJsVar('ajaxGenerateUrl', Url::to(['/site/ajax-generate', 'userId' => 1]));
+
+$js = <<<JS
+(function () {
+    let isGenerating = false;
+    let previousHtml = null;
+
+    $('#siteIndexContainer').on('click', '#generateApplesBtn', function (e) {
+        e.preventDefault();
+        if (isGenerating) {
+            return;
+        }
+
+        isGenerating = true;
+
+        previousHtml = $('#applesContent').html();
+        
+        $('#applesContent').html(applesLoadingHtml);
+        
+        let \$btn = $(this);
+        \$btn.addClass('disabled');
+        \$btn.attr('aria-disabled', 'true');
+
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: ajaxGenerateUrl
+        })
+        .done(function (data) {
+            $('#applesContent').html(data.html);
+        })
+        .fail(function () {
+            $('#applesContent').html(previousHtml || '');
+            alert('Не удалось сгенерировать яблоки. Проверьте сеть и ответ сервера.');
+        })
+        .always(function () {
+            isGenerating = false;
+            \$btn.removeClass('disabled');
+            \$btn.removeAttr('aria-disabled');
+        });
+    });
+})();
+JS;
+
+$this->registerJs($js);

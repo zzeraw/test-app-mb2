@@ -17,6 +17,7 @@ use yii\helpers\VarDumper;
 readonly class AppleRepository
 {
     private const string DATETIME_FORMAT = 'Y-m-d H:i:s';
+    private const int SITE_PERCENT_DEFAULT_VALUE = 100;
 
     /**
      * @return AppleDto[]
@@ -39,20 +40,22 @@ readonly class AppleRepository
      * @throws DbException
      * @throws BaseException
      */
-    private function createNewModel(
+    public function createNewModel(
         int $userId,
         AppleColorEnum $color,
         DateTimeImmutable $appearedAt
-    ): int {
+    ): AppleDto {
         $appleModel = new Apple();
 
         $appleModel->setUserId($userId);
         $appleModel->setColor($color->value);
+        $appleModel->setSizePercent(self::SITE_PERCENT_DEFAULT_VALUE);
         $appleModel->setStatus(AppleStatusEnum::ON_TREE->value);
         $appleModel->setAppearedAt($appearedAt->format(self::DATETIME_FORMAT));
         $appleModel->setFellAt(null);
         $appleModel->setCreatedAt((new DateTimeImmutable())->format(self::DATETIME_FORMAT));
         $appleModel->setUpdatedAt((new DateTimeImmutable())->format(self::DATETIME_FORMAT));
+        $appleModel->setIsArchive(false);
 
         $saveResult = $appleModel->save();
 
@@ -65,14 +68,14 @@ readonly class AppleRepository
             );
         }
 
-        return $appleModel->getPrimaryKey();
+        return $appleModel->getDto();
     }
 
     /**
      * @throws BaseException
      * @throws DbException
      */
-    private function updateModel(
+    public function updateModel(
         int $id,
         int $userId,
         AppleColorEnum $color,
@@ -109,7 +112,7 @@ readonly class AppleRepository
         return $appleModel->getPrimaryKey();
     }
 
-    private function setAsArchivedByUserId(
+    public function setAsArchivedByUserId(
         int $userId,
     ): int {
         return Apple::updateAll(
