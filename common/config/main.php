@@ -4,6 +4,8 @@ $dependencyInjectionContainers = require __DIR__ . '/di.php';
 $dbMain = require __DIR__ . '/db/_db_main.php';
 
 $config = [
+    'id' => 'test-app-mb2',
+    'name' => 'Тестовое задание для MB2',
     'aliases' => [
         '@bower' => '@vendor/yidas/yii2-bower-asset/bower',
         '@npm'   => '@vendor/npm-asset',

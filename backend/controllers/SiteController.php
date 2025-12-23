@@ -20,7 +20,12 @@ class SiteController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        'actions' => ['index'],
+                        'actions' => [
+                            'index',
+                            'ajax-generate',
+                            'ajax-fall-down',
+                            'ajax-eat',
+                        ],
                         'allow' => true,
                         'roles' => ['@'],
                     ],

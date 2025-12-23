@@ -21,7 +21,7 @@ class UserController extends Controller
     }
 
     /**
-     * php yii user/create
+     * php yii user/create email password
      */
     public function actionCreate(
         string $email,
